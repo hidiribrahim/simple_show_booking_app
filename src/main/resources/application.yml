@@ -1,0 +1,30 @@
+application:
+  profiles:
+    active: dev
+
+---
+spring:
+  app:
+    timezone: 'Asia/Singapore'
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: jdbc:h2:mem:mydb
+    username: sa
+    password: password
+    driverClassName: org.h2.Driver
+  h2:
+    console:
+      path: /h2-console
+      settings.trace: false
+      settings.web-allow-others: false
+      enabled: true
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    properties:
+      hibernate:
+        globally_quoted_identifiers: true
+    hibernate:
+      ddl-auto: create-drop
+    defer-datasource-initialization: true
