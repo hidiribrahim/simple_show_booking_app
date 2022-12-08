@@ -10,6 +10,7 @@ By Hidir Ibrahim
 * OpenAPI 
 ### API 
 ![img.png](img.png)
+
 API spec found at: /swagger-ui/index.html
 
 
