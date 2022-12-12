@@ -18,6 +18,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.util.List;
@@ -27,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
 @WebMvcTest(AdminController.class)
@@ -49,10 +50,15 @@ class AdminControllerTest {
 
     @Test
     void givenShowNum_return200() throws Exception {
-        List<TicketDto> tickets = List.of(new TicketDto(),new TicketDto());
+        List<TicketDto> tickets = List.of(new TicketDto(1L,"123","A1",1),new TicketDto(2L,"123","A2",1));
         when(ticketService.getTicketsBookedByShowId(1)).thenReturn(tickets);
+
         mockMvc.perform(get("/admin/tickets/1"))
-                .andExpect(status().is2xxSuccessful());
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json("[{\"id\":1,\"phoneNumber\":\"123\",\"seatNumber\":\"A1\",\"showNumber\":1},{\"id\":2,\"phoneNumber\":\"123\",\"seatNumber\":\"A2\",\"showNumber\":1}]"));
+
+
     }
 
     @Test
@@ -86,7 +92,11 @@ class AdminControllerTest {
         List<ShowDto> shows = List.of(new ShowDto(1,"the show",1,10,2),new ShowDto(2,"the second show",2,10,2));
         when(showService.getAllShows()).thenReturn(shows);
         mockMvc.perform(get("/admin/shows"))
-                .andExpect(status().is2xxSuccessful());
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(content().json("[{\"id\":1,\"showName\":\"the show\",\"rowCount\":1,\"seatsPerRow\":10,\"cancellationWindow\":2},{\"id\":2,\"showName\":\"the second show\",\"rowCount\":2,\"seatsPerRow\":10,\"cancellationWindow\":2}]"));
+
+
     }
 
 }
