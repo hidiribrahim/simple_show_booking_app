@@ -23,12 +23,14 @@ public class ShowService {
     }
 
     public List<ShowDto> getAllShows() {
-        List<Show> shows = showRepository.findAll();
-        return shows.stream().map(show->mapper.map(show,ShowDto.class)).collect(Collectors.toList());
+        return showRepository
+                .findAll()
+                .stream()
+                .map(show->mapper.map(show,ShowDto.class))
+                .collect(Collectors.toList());
     }
 
     public void save(ShowDto showDto) {
-
         Show show = mapper.map(showDto, Show.class);
         showRepository.save(show);
     }
