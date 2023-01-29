@@ -18,12 +18,13 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 
+import javax.persistence.Basic;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -39,6 +40,9 @@ class TicketServiceTest {
 
     @Mock
     ShowService showService;
+
+    @Mock
+    SeatService seatService;
 
     @Spy
     ModelMapper mapper = new ModelMapper();
@@ -163,4 +167,5 @@ class TicketServiceTest {
         when(ticketRepository.findByIdAndPhoneNumber(1L,"1")).thenReturn(Optional.of(ticket));
         assertThrows(SeatBookingException.class, ()-> ticketService.cancelTicket(1L,"1"));
     }
+
 }

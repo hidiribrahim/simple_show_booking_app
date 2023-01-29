@@ -7,6 +7,7 @@ import com.hidir.show.dto.TicketDto;
 import com.hidir.show.entity.Ticket;
 import com.hidir.show.exception.SeatBookingException;
 import com.hidir.show.repository.TicketRepository;
+import com.hidir.show.service.SeatService.SEAT_AVAILABILITY;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,8 @@ import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,15 +24,19 @@ public class TicketService {
 
     private final TicketRepository ticketRepository;
     private final ShowService showService;
+    private final SeatService seatService;
 
     private static final int ASCII_OFFSET = 64;
 
     private static final String ZONE_ID = "Asia/Singapore";
 
     private ModelMapper mapper;
-    public TicketService(TicketRepository ticketRepository, ShowService showService , ModelMapper mapper) {
+
+
+    public TicketService(TicketRepository ticketRepository, ShowService showService, SeatService seatService, ModelMapper mapper) {
         this.ticketRepository = ticketRepository;
         this.showService = showService;
+        this.seatService = seatService;
         this.mapper = mapper;
     }
 
@@ -61,6 +68,22 @@ public class TicketService {
                         .build();
 
     }
+
+    public Set<String> getAvailableSeats(int showNumber) {
+
+        Map<String, SEAT_AVAILABILITY> seatMap = seatService.initSeatMapping(showNumber);
+
+        Set<String> seatsBooked = getTicketsBookedByShowId(showNumber).stream()
+                .map(TicketDto::getSeatNumber)
+                .collect(Collectors.toSet());
+
+        return seatMap.keySet().stream()
+                .filter(seat->!seatsBooked.contains(seat))
+                .collect(Collectors.toSet());
+
+
+    }
+
 
     private void validateRequest(PurchaseTicketsRequest request,ShowDto showDto) {
 
@@ -108,4 +131,6 @@ public class TicketService {
             throw new SeatBookingException("Failed to cancel ticket as you have exceeded the max cancellation window.");
         }
     }
+
+
 }

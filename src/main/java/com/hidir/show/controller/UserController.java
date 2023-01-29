@@ -36,7 +36,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(path = "/seats/{showNumber}",produces = MediaType.APPLICATION_JSON_VALUE)
     public Set<String> getSeatsByShowNumber(@PathVariable Integer showNumber) {
-        return seatService.getAvailableSeats(showNumber);
+        return ticketService.getAvailableSeats(showNumber);
     }
 
     @ResponseStatus(HttpStatus.OK)

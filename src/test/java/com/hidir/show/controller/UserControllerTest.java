@@ -69,7 +69,7 @@ public class UserControllerTest {
     @Test
     void givenShowId_shouldReturnAvailableSeats_return200() throws Exception {
         Set<String> set = Set.of("A1","A2","A3");
-        Mockito.when(seatService.getAvailableSeats(anyInt())).thenReturn(set);
+        Mockito.when(ticketService.getAvailableSeats(anyInt())).thenReturn(set);
         mockMvc.perform(get("/user/seats/1"))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))

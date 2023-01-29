@@ -26,20 +26,22 @@ class SeatServiceTest {
     TicketService ticketService;
 
 
+
     @Test
     void shouldGenerateSeatByShowBounds() {
         int showNumber = 1;
         int rowCount = 2;
         int seatPerRow = 10;
         int expectedSeatCount = rowCount * seatPerRow;
+
+
         ShowDto showDto = new ShowDto(showNumber,"the show",rowCount,seatPerRow,2);
         List<TicketDto> mockTicketDtos = List.of(
                 new TicketDto(1L,"1","A1",1),
                 new TicketDto(2L,"1","A4",1)
         );
         when(showService.findShowById(showNumber)).thenReturn(showDto);
-        when(ticketService.getTicketsBookedByShowId(showNumber)).thenReturn(mockTicketDtos);
-        Map<String, SeatService.SEAT_AVAILABILITY> mapResponse = seatService.getSeatAllocationByShowNumber(showNumber);
+        Map<String, SeatService.SEAT_AVAILABILITY> mapResponse = seatService.initSeatMapping(showNumber);
 
         assertEquals(true,mapResponse.containsKey("A1"));
         assertEquals(true,mapResponse.containsKey("A10"));
@@ -49,49 +51,7 @@ class SeatServiceTest {
 
     }
 
-    @Test
-    void getSeatAllocationByShowNumber() {
-        int showNumber = 1;
-        ShowDto showDto = new ShowDto(showNumber,"the show",1,10,2);
-        List<TicketDto> mockTicketDtos = List.of(
-                new TicketDto(1L,"1","A1",1),
-                new TicketDto(2L,"1","A4",1)
-        );
-        when(showService.findShowById(showNumber)).thenReturn(showDto);
-        when(ticketService.getTicketsBookedByShowId(showNumber)).thenReturn(mockTicketDtos);
-        Map<String, SeatService.SEAT_AVAILABILITY> mapResponse = seatService.getSeatAllocationByShowNumber(showNumber);
 
-        assertEquals(true,mapResponse.containsKey("A1"));
-        assertEquals(true,mapResponse.containsKey("A4"));
-        assertEquals(SeatService.SEAT_AVAILABILITY.BOOKED,mapResponse.get("A1"));
-        assertEquals(SeatService.SEAT_AVAILABILITY.BOOKED,mapResponse.get("A4"));
-        assertEquals(SeatService.SEAT_AVAILABILITY.AVAILABLE,mapResponse.get("A2"));
-        assertEquals(SeatService.SEAT_AVAILABILITY.AVAILABLE,mapResponse.get("A3"));
-
-
-    }
-
-    @Test
-    void getAvailableSeats_shouldNotIncludeBookedSeats() {
-        List<TicketDto> mockTicketDtos = List.of(
-                new TicketDto(1L,"1","A1",1),
-                new TicketDto(2L,"1","A4",1)
-        );
-        int showNumber = 1;
-        int rowCount = 2;
-        int seatPerRow = 10;
-        int expectedSeatCount = rowCount * seatPerRow;
-        int expectedAvailSeatCount = expectedSeatCount- mockTicketDtos.size();
-        ShowDto showDto = new ShowDto(showNumber,"the show",rowCount,seatPerRow,2);
-        when(showService.findShowById(showNumber)).thenReturn(showDto);
-
-        when(ticketService.getTicketsBookedByShowId(showNumber)).thenReturn(mockTicketDtos);
-        Set<String> seatServiceAvailableSeats = seatService.getAvailableSeats(showNumber);
-
-        assertEquals(expectedAvailSeatCount,seatServiceAvailableSeats.size());
-        assertTrue(!seatServiceAvailableSeats.containsAll(List.of("A1","A4")));
-
-    }
 
 
 }
